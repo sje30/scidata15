@@ -96,9 +96,9 @@ the repository, occupying \Sexpr{file.size.mb} MB on disc.
 
 1. Good for your future self.
 
-2. Good for reviewers.
+2. Good publicity.  [Nature Neuroscience podcast](http://www.nature.com/neurosci/neuropod/index-2014-04-25.html)
 
-3. Good PR.
+3. Good for reviewers ...
 
 ## Reviews
 
@@ -121,12 +121,6 @@ par(mfrow=c(1,2))
 plot.corr.index(s)
 plot.corr.index(s, log='y')
 ```
-
-## Good PR
-
-Journal were keen to see RR, so they wrote a
-press-release. [Nature Neuroscience podcast](http://www.nature.com/neurosci/neuropod/index-2014-04-25.html)
-a few weeks later.
 
 
 ## Good practice
