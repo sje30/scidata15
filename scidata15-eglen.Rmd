@@ -1,8 +1,8 @@
 ---
-title: "Patterns of spontaneous activity in developing networks"
+title: "Writing your scientific papers with reproducible research tools"
 subtitle: "A case study for RR in Neuroscience"
-author: Stephen J Eglen
-date: 2015-07-08
+author: Stephen J. Eglen
+date: 2015-10-23
 output:
   ioslides_presentation
 ---
@@ -15,6 +15,10 @@ h3 {
 }
 </style>
 
+
+----
+
+<center><img src="figs/rr.svg" height="400px" /></center>
 
 ----
 
@@ -49,45 +53,138 @@ This is my *note*.
 
 - Determined what meta data is crucial.
 
-- Converted to a common format . . .
+- Converted to a common format, HDF5.
 
-
-## What is HDF5? | Hierarchical data format, version 5
-
-- Scientific data format, useful across disciplines.
-- Adopted recently by Matlab.
-- All modern languages can read/write it.
-- Native compression
-
-- All meta data contained within the file.
-
-
-## HDF5 example
-
-<pre>
-h5ls -r ~/proj/carmen/waverepo/waverepo/hdf5/Wong1993/Wong1993_P0.h5
-/                        Group
-/array                   Dataset {1}
-/epos                    Dataset {2, 39}
-/meta                    Group
-/meta/age                Dataset {1}
-/meta/key                Dataset {1}
-/meta/species            Dataset {1}
-/names                   Dataset {39}
-/sCount                  Dataset {39}
-/spikes                  Dataset {13336}
-/summary                 Group
-/summary/N               Dataset {1}
-/summary/duration        Dataset {1}
-/summary/frate           Dataset {39}
-/summary/totalspikes     Dataset {1}
-</pre>
 
 
 ## Datasets
 
-![Nelec against duration](figs/nelec-durn-fig-crop.svg)
+<center><img src="figs/nelec-durn-fig-crop.svg" height="450px" /></center>
 
+"Basic features of recordings ... We currently have **366** recordings
+in the repository, occupying **298** MB on disc"
+
+
+## Embedding code into documents
+<pre>
+\begin{figure}[h]
+  \centering
+  <<nelec-durn-fig,echo=FALSE>>=
+  keys.f <- as.factor(keys)
+  n.labs <- nlevels(keys.f)
+  lab.cols = brewer.pal(n=n.labs, name='Set3')
+  lab.cols[2] = "#444444"
+  plot(counts, durns/60, log='xy', pch=20, col=lab.cols[keys.f],
+         xlab='Number of spike trains',
+         xlim=c(2, 2000),
+         ylab='Duration of recording (min)', bty='n', las=1)
+  legend('topleft', legend=levels(keys.f), cex=0.8,
+           ncol=2, col=lab.cols[1:n.labs], pch=19)
+  @
+\caption{Basic features of recordings in the repository.  ...
+We currently have \Sexpr{length(h5.files)} recordings in
+the repository, occupying \Sexpr{file.size.mb} MB on disc.
+\end{figure}
+</pre>
+
+## Full document
+
+<iframe src="copy_waverepo_paper.Rnw"></iframe>
+
+## Why bother?
+
+
+1. Good for your future self.
+
+2. Good for reviewers.
+
+3. Good PR.
+
+## Reviews
+
+<!--- Aside: reviews were signed and are now --->
+<!--- [public](http://www.gigasciencejournal.com/content/3/1/3/prepub), [attachment](http://www.gigasciencejournal.com/manuscript/review/attachment/pdf/6813937211125312.pdf) --->
+
+    I would use an ordinate log scale for this bottom right panel (as
+    done in Fig.  3). But since the authors gave me everything, I can
+    do it! by redefining fourplot as follows:
+
+```{r, include=FALSE,warning=FALSE}
+require(sjemea)
+data.file <- system.file("examples", "P9_CTRL_MY1_1A.txt",
+    package = "sjemea")
+s <- jay.read.spikes( data.file)
+```
+
+```{r,echo=FALSE,warning=FALSE}
+par(mfrow=c(1,2))
+plot.corr.index(s)
+plot.corr.index(s, log='y')
+```
+
+## Good PR
+
+Journal were keen to see RR, so they wrote a
+press-release. [Nature Neuroscience podcast](http://www.nature.com/neurosci/neuropod/index-2014-04-25.html)
+a few weeks later.
+
+
+## Good practice
+
+I try to write my papers now in this format, so that I can bundle data
+and code with manuscript.
+
+I use [knitr](http://yihui.name/knitr/) but other systems,
+e.g. [Jupyter](http://jupyter.org) available.
+
+Docker also makes it easy to test on fresh systems, and for others to
+test:
+
+    docker run -d -p 8787:8787 sje30/waverepo
+	open http://192.168.59.103:8787/
+
+Login with "rstudio" as username and password.  Open
+`waverepo/paper/waverepo_paper.Rnw` and hit the "Compile PDF" button.
+
+
+## Lessons learnt
+
+- People were willing to give away their *published* data; only one
+  group could not find data to share.
+
+- Designing *meta data* is hard.  This version was deliberately minimal
+  and lasted approximately two months.
+  
+- Data papers can be well-received.  Media attention.
+
+- Reproducible research takes a bit longer in the short-term, but
+  should benefit in long-term.
+
+More generally:
+
+- Share your data
+
+- Share your code
+
+- Share your papers [http://biorxiv.org](http://biorxiv.org)
+
+
+
+## Acknowledgements
+
+- CARMEN project: (Evelyne Sernagor, Jennifer Simonotto, Mike Weeks, Mark
+  Jessop, Tom Jackson) 
+
+- Waverepo data providers.
+
+- Ben Marwick (Docker)
+
+- Wellcome Trust, EPSRC, BBSRC, Software Sustainability Institute
+
+
+<!-- TODO: problem when lines are not separated by blank line. -->
+
+# End
 
 
 ----
@@ -103,32 +200,6 @@ dynamically, e.g. every time the database extended.
 
 <iframe src="http://www.gigasciencejournal.com/content/3/1/3"></iframe>
 
-
-## Submitting the paper
-
-Provided all code and data online on our web page together with PDF.
-
-Cook for one month...
-
-## Reviews
-
-(Aside: reviews were signed and are now public).
-http://www.gigasciencejournal.com/content/3/1/3/prepub
-
-From: http://www.gigasciencejournal.com/manuscript/review/attachment/pdf/6813937211125312.pdf
-
-    I would use an ordinate log scale for this bottom right panel (as
-    done in Fig.  3). But since the authors gave me everything, I can
-    do it! by redefining fourplot as follows:
-
-
-## Post acceptance
-Journal were keen to see RR, so they wrote a press-release. Nature
-Neuroscience podcast a few weeks later.
-
-(Hint: contact http://www.communications.cam.ac.uk/)
-
-<iframe src="http://www.cam.ac.uk/research/news/from-mexican-wave-to-retinal-wave-why-sharing-data-is-good-for-science"></iframe>
 
 
 # What next
@@ -170,93 +241,3 @@ e.g. Badge earners in
 <!--- supposed to offer them, see comment in: --->
 <!--- http://blogs.biomedcentral.com/bmcblog/2014/10/07/why-we-need-badges-in-science/#disqus_thread --->
 <!--- and that page discusses the taxonomy of contributing. --->
-
-## Good practice
-
-I try to write my papers now in this format, so that I can bundle data
-and code with manuscript.
-
-Docker also makes it easy to test on fresh systems, and for others to
-test:
-
-    docker run -d -p 8787:8787 sje30/waverepo
-	open http://192.168.59.103:8787/
-
-Login with "rstudio" as username and password.  Open
-`waverepo/paper/waverepo_paper.Rnw` and hit the "Compile PDF" button.
-
-
-## Live demo
-
-Anyone with docker installed on their laptop and want to try a live
-demo (apart from me)?
-
-GUI available via https://kitematic.com/
-
-
-
-## Lessons learnt
-
-- People were willing to give away their *published* data.
-
-- Only one group could not find data to share.
-
-- Test sets for data important.  How do you know you've got it right?
-  
-- Data papers can be well-received.  Media attention.
-
-- Reproducible research takes a bit longer in the short-term, but
-  should benefit in long-term.
-
-- Designing *meta data* is hard.  This version was deliberately minimal
-  and lasted approximately two months.
-  
-
-## Reproducible research is everywhere ...
-
-... including these slides.  Made with markdown in R.  You can grab the
-source from
-
-https://github.com/bioinformatics-core-shared-training/rep-research-masterclass
-
-and regenerate them in R with:
-
-```
-Rscript -e 'rmarkdown::render("neurocase1.Rmd")'
-```
-or see the `Makefile` rule to regenerate.
-
-## Summary 
-
-- Building repositories allows for reproducible research.
-
-- Data papers are important and useful.
-
-- Embedding meta data in files is the future.
-
-
-More generally:
-
-- Share your data
-
-- Share your code
-
-- Share your papers [http://biorxiv.org](http://biorxiv.org)
-
-
-
-## Acknowledgements
-
-- CARMEN project: (Evelyne Sernagor, Jennifer Simonotto, Mike Weeks, Mark
-  Jessop, Tom Jackson) 
-
-- Waverepo data providers.
-
-- Malin Sandström (INCF).
-
-- Ben Marwick (Docker)
-
-- Wellcome Trust, EPSRC, BBSRC.
-
-
-<!-- TODO: problem when lines are not separated by blank line. -->
